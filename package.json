@@ -1,0 +1,12 @@
+{
+  "name": "mss-ops",
+  "version": "1.0.0",
+  "scripts": {
+    "test:db": "node scripts/test-db.mjs"
+  },
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8"
+  }
+}

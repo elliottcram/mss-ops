@@ -2,9 +2,27 @@
 
 The web app MSS uses to run every job through the umbrella scheme, from enquiry to close. It keeps each job MCS, HIES and BUS compliant, chases what's missing, and shows the office what needs doing next.
 
-## What's here so far
+## The app
 
-`supabase/migrations/` holds the database, applied in filename order:
+A Next.js 16 app (`src/`) on top of the Supabase database. Staff sign in with an email and password.
+
+| Page | What it does |
+|---|---|
+| `/` | Every live job, worst first: deadline missed, still needed, ready to move on, on hold. Counts at the top double as filters. |
+| `/jobs/new` | The intake form. Only the job reference is required; new-build questions appear only for new builds. |
+| `/jobs/[id]` | One job: what's still needed (tick "Got it" or "Not needed"), steps done with dates, the ten "can it move on?" gates, deadlines, details, hold, and who changed what. |
+| `/installers` | Installers and their onboarding checklist, plus the list of heat pump makes. |
+
+To run it locally, copy `.env.example` to `.env.local`, fill in the Supabase URL and publishable key, then `npm install` and `npm run dev`.
+
+### Adding a member of staff
+
+1. Supabase dashboard → Authentication → Users → Add user → email and password, with "Auto confirm" ticked.
+2. Add them to the `staff` table with that user's id in `auth_user_id`. Until then they can sign in but see nothing.
+
+## The database
+
+`supabase/migrations/` holds the database, applied in filename order (all applied to the live project):
 
 | File | What it holds |
 |---|---|
@@ -14,6 +32,8 @@ The web app MSS uses to run every job through the umbrella scheme, from enquiry 
 | `…120300_gates_deadlines.sql` | The ten gates ("can this happen yet?"), the combined list of what's missing, and every legal or scheme deadline |
 | `…120400_security.sql` | Row-level security: only signed-in, active staff can read or write |
 | `…120500_reference_data.sql` | Settings, Easy MCS lookups, requirements, supervision matrix, milestones, checkpoints, draft chase rules, bank holidays |
+| `20261011120000_hardening.sql` | Fixes from Supabase's security and performance checks |
+| `20261011130000_actor_from_session.sql` | The audit log names the signed-in member of staff |
 
 `supabase/tests/` holds the self-checking tests.
 
@@ -44,7 +64,8 @@ This runs every migration and test on a throwaway in-memory Postgres. No Supabas
 
 ## Still to build
 
-- The Next.js app (sign-in, pipeline home, intake form, job page with checklist and gaps).
+- Editing a job's details after intake, and the stage 3 to 10 screens (spec, money, HIES/DNO/BUS, photos).
+- Sending requests and chasers by email.
 - File storage for uploads and photos.
 - Emailed no-account links for installers and homeowners (checked by the server, written with the service role).
 - Finer per-role access (for example, surveyors seeing only their jobs). Any new table also needs row-level security switched on.

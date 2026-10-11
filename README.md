@@ -4,7 +4,7 @@ The web app MSS uses to run every job through the umbrella scheme, from enquiry 
 
 ## The app
 
-A Next.js 16 app (`src/`) on top of the Supabase database. Staff sign in with an email and password.
+A Next.js 16 app (`src/`) on top of the Supabase database. Staff sign in with their Microsoft 365 work account, so Microsoft's MFA applies. An email-and-password sign-in is kept as a fallback for now.
 
 | Page | What it does |
 |---|---|
@@ -17,8 +17,7 @@ To run it locally, copy `.env.example` to `.env.local`, fill in the Supabase URL
 
 ### Adding a member of staff
 
-1. Supabase dashboard → Authentication → Users → Add user → email and password, with "Auto confirm" ticked.
-2. Add them to the `staff` table with that user's id in `auth_user_id`. Until then they can sign in but see nothing.
+Add a row to the `staff` table with their work email. The first time they sign in with Microsoft, the app links their account to that row. Anyone without a staff row can sign in but sees nothing.
 
 ## The database
 
@@ -34,6 +33,7 @@ To run it locally, copy `.env.example` to `.env.local`, fill in the Supabase URL
 | `…120500_reference_data.sql` | Settings, Easy MCS lookups, requirements, supervision matrix, milestones, checkpoints, draft chase rules, bank holidays |
 | `20261011120000_hardening.sql` | Fixes from Supabase's security and performance checks |
 | `20261011130000_actor_from_session.sql` | The audit log names the signed-in member of staff |
+| `20261011140000_link_staff_on_microsoft_signin.sql` | A first Microsoft sign-in links to the staff row with the same email |
 
 `supabase/tests/` holds the self-checking tests.
 

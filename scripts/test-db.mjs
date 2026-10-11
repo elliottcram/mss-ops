@@ -12,6 +12,7 @@ await db.exec(`
   create schema auth;
   create function auth.uid() returns uuid language sql stable as 'select null::uuid';
   create role anon; create role authenticated;
+  create table auth.users (id uuid primary key, email text, raw_app_meta_data jsonb not null default '{}');
 `);
 
 const run = async (dir) => {
